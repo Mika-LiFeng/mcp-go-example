@@ -19,4 +19,5 @@ func main() {
 	if err := mcpServer.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
 		log.Fatalf("run MCP server: %v", err)
 	}
+	log.Println("MCP server started")
 }

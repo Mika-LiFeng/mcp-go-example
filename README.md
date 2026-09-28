@@ -2,10 +2,15 @@
 
 这是一个用于学习 Model Context Protocol（MCP）的 Go 示例服务。
 
-当前版本使用 `stdio` 传输，提供两个 Tool：
+当前版本提供两种传输方式，并提供两个 Tool：
 
 - `greet`：根据姓名生成问候语；
 - `calculate`：执行加减乘除运算。
+
+传输方式：
+
+- `stdio`：适合本地 MCP 客户端启动子进程；
+- `Streamable HTTP`：适合远程 MCP 客户端通过 HTTP 调用。
 
 ## 环境要求
 
@@ -28,6 +33,34 @@ go run ./cmd/mcp-example
 
 注意：stdout 是 MCP 协议通道，服务日志应写入 stderr。
 
+## 运行 HTTP 服务
+
+HTTP 服务默认监听 `127.0.0.1:8080`：
+
+```bash
+go run ./cmd/mcp-http
+```
+
+远程 MCP 端点：
+
+```text
+http://127.0.0.1:8080/mcp
+```
+
+健康检查：
+
+```text
+http://127.0.0.1:8080/healthz
+```
+
+修改监听地址：
+
+```bash
+go run ./cmd/mcp-http -addr 0.0.0.0:8080
+```
+
+`0.0.0.0` 会监听所有网卡，仅建议在已经配置访问控制、TLS 和认证后使用。
+
 ## 使用 MCP Inspector 调试
 
 ```bash
@@ -36,10 +69,17 @@ npx @modelcontextprotocol/inspector go run ./cmd/mcp-example
 
 在 Inspector 中打开 Tools，选择 `greet` 或 `calculate` 即可调用。
 
+HTTP 服务也可以直接交给 Inspector：
+
+```bash
+npx @modelcontextprotocol/inspector http://127.0.0.1:8080/mcp
+```
+
 ## 构建
 
 ```bash
 go build -o bin/mcp-example ./cmd/mcp-example
+go build -o bin/mcp-http ./cmd/mcp-http
 ```
 
 ## 测试
@@ -62,3 +102,11 @@ go vet ./...
   }
 }
 ```
+
+远程 HTTP 客户端则使用下面的 MCP 地址：
+
+```text
+http://127.0.0.1:8080/mcp
+```
+
+当前 HTTP 示例未加入身份认证，禁止直接暴露到公网；正式部署前应增加 HTTPS、Bearer Token、来源限制和限流。
