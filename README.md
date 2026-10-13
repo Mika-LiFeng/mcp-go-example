@@ -12,6 +12,8 @@
 - `stdio`：适合本地 MCP 客户端启动子进程；
 - `Streamable HTTP`：适合远程 MCP 客户端通过 HTTP 调用。
 
+其中 `cmd/mcp-native-http.go` 是独立的标准库实现，不依赖 MCP SDK 或 Web 框架，提供 `greet` 和 `calculate` 工具。项目中的其他示例仍使用 MCP Go SDK。
+
 ## 环境要求
 
 - Go 1.27 或更高版本；
@@ -75,11 +77,26 @@ HTTP 服务也可以直接交给 Inspector：
 npx @modelcontextprotocol/inspector http://127.0.0.1:8080/mcp
 ```
 
+## 运行原生 Go HTTP 示例
+
+该实现只使用 Go 标准库，默认监听 `127.0.0.1:8081`，支持 MCP 初始化、工具列表和工具调用，采用无会话 JSON 响应模式：
+
+```bash
+go run ./cmd/mcp-native-http.go
+```
+
+将 Inspector 连接到 `http://127.0.0.1:8081/mcp` 。要修改监听地址：
+
+```bash
+go run ./cmd/mcp-native-http.go -addr 127.0.0.1:9090
+```
+
 ## 构建
 
 ```bash
 go build -o bin/mcp-example ./cmd/mcp-example
 go build -o bin/mcp-http ./cmd/mcp-http
+go build -o bin/mcp-native-http ./cmd/mcp-native-http.go
 ```
 
 ## 测试
