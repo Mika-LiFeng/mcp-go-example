@@ -23,6 +23,8 @@ func NewHandler(mcpServer *mcp.Server) http.Handler {
 		&mcp.StreamableHTTPOptions{
 			// 使用 JSON 响应便于学习和使用 curl/Inspector 调试。
 			JSONResponse: true,
+			// 配置此项为 true 后，会使用 2026-07-28 协议，否则会降级到 2025-11-25 协议。
+			//Stateless: true,
 		},
 	)
 
